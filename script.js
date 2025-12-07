@@ -6,14 +6,15 @@ const rightWeightDisplay = document.getElementById("right-weight");
 const nextWeightDisplay = document.getElementById("next-weight");
 const angleDisplay = document.getElementById("tilt-angle");
 const resetBtn = document.getElementById("reset-btn");
+const logContainer = document.getElementById("log-container");
 
 let objects = [];
 let currentNextWeight = 0;
+const Seesaw_Width = 500;
 
 window.addEventListener("load", function () {
-  const savedState = localStorage.getItem("seesawState");
-
   generateNextWeight();
+  const savedState = localStorage.getItem("seesawState");
 
   if (savedState) {
     objects = JSON.parse(savedState);
@@ -31,11 +32,10 @@ function generateNextWeight() {
 }
 
 seesaw.addEventListener("click", function (event) {
-  const pivotRect = pivot.getBoundingClientRect();
-  const pivotCenter = pivotRect.left + pivotRect.width / 2;
-
-  const clickX = event.clientX;
-  const distanceFromCenter = clickX - pivotCenter;
+  const rect = seesaw.getBoundingClientRect();
+  const center = rect.width / 2;
+  const clickX = event.clientX - rect.left;
+  const distanceFromCenter = clickX - center;
 
   const weight = currentNextWeight;
 
@@ -43,11 +43,18 @@ seesaw.addEventListener("click", function (event) {
     id: Date.now(),
     weight: weight,
     distance: distanceFromCenter,
-    cssLeft: 300 + distanceFromCenter,
+    cssLeft: clickX,
   };
 
   objects.push(newObject);
   createBox(newObject);
+
+  const side = distanceFromCenter < 0 ? "Sol" : "Sağ";
+  addLog(
+    `${weight}kg ${side} tarafa, merkezden ${Math.abs(
+      Math.round(distanceFromCenter)
+    )}px uzağa eklendi.`
+  );
   /* console.log("Eklenen nesne:", newObject); */
 
   updatePhysics();
@@ -64,7 +71,7 @@ function createBox(obj) {
   const box = document.createElement("div");
   box.className = "box";
   box.style.left = obj.cssLeft + "px";
-  const size = 30 + obj.weight * 3;
+  const size = 30 + obj.weight * 2;
 
   box.style.width = size + "px";
   box.style.height = size + "px";
@@ -77,6 +84,21 @@ function createBox(obj) {
   }
 
   seesaw.appendChild(box);
+}
+
+function addLog(message) {
+  const entry = document.createElement("div");
+  entry.className = "log-entry";
+  if (message.includes("Sol")) {
+    entry.style.borderLeftColor = "#ec5342ff";
+    entry.style.color = "#c0392b";
+  } else {
+    entry.style.borderLeftColor = "#2c8ac9ff";
+    entry.style.color = "#2980b9";
+  }
+
+  entry.innerText = `> ${message}`;
+  logContainer.prepend(entry);
 }
 
 function updatePhysics() {
@@ -101,7 +123,7 @@ function updatePhysics() {
   rightWeightDisplay.innerText = rightTotalWeight;
   const netTorque = rightTorque - leftTorque;
 
-  let angle = netTorque / 1000;
+  let angle = netTorque / 800;
   if (angle > 30) angle = 30;
   if (angle < -30) angle = -30;
 
@@ -114,6 +136,7 @@ resetBtn.addEventListener("click", function () {
   seesaw.innerHTML = "";
 
   localStorage.removeItem("seesawState");
+  logContainer.innerHTML = "";
 
   updatePhysics();
   generateNextWeight();
