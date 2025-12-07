@@ -29,6 +29,20 @@ body {
   color: #333;
 }
 
+.stats-panel {
+  display: flex;
+  justify-content: space-between;
+  width: 800px;
+  margin: 0 auto 50px auto;
+  gap: 10px;
+}
+
+.next-box {
+  background-color: #331f1f;
+  border: 2px solid #0a1f30;
+  color: #ffffff;
+}
+
 .game-area {
   background-color: #e0e0e0;
   position: relative;
@@ -74,10 +88,11 @@ body {
 }
 
 .reset-btn {
+  align-items: center;
   margin-top: 40px;
   padding: 12px 24px;
   font-size: 16px;
-  background-color: #273849;
+  background-color: #3b4e5f;
   color: white;
   border: none;
   border-radius: 6px;
@@ -86,5 +101,5 @@ body {
 }
 
 .reset-btn:hover {
-  background-color: #1c2531;
+  background-color: #070d16;
 }

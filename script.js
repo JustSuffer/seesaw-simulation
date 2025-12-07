@@ -3,11 +3,17 @@ const pivot = document.querySelector(".pivot");
 
 const leftWeightDisplay = document.getElementById("left-weight");
 const rightWeightDisplay = document.getElementById("right-weight");
+const nextWeightDisplay = document.getElementById("next-weight");
+const angleDisplay = document.getElementById("tilt-angle");
+const resetBtn = document.getElementById("reset-btn");
 
 let objects = [];
+let currentNextWeight = 0;
 
 window.addEventListener("load", function () {
   const savedState = localStorage.getItem("seesawState");
+
+  generateNextWeight();
 
   if (savedState) {
     objects = JSON.parse(savedState);
@@ -18,6 +24,12 @@ window.addEventListener("load", function () {
   }
 });
 
+function generateNextWeight() {
+  currentNextWeight = Math.floor(Math.random() * 10) + 1;
+
+  nextWeightDisplay.innerText = currentNextWeight;
+}
+
 seesaw.addEventListener("click", function (event) {
   const pivotRect = pivot.getBoundingClientRect();
   const pivotCenter = pivotRect.left + pivotRect.width / 2;
@@ -25,7 +37,7 @@ seesaw.addEventListener("click", function (event) {
   const clickX = event.clientX;
   const distanceFromCenter = clickX - pivotCenter;
 
-  const weight = Math.floor(Math.random() * 10) + 1;
+  const weight = currentNextWeight;
 
   const newObject = {
     id: Date.now(),
@@ -40,6 +52,8 @@ seesaw.addEventListener("click", function (event) {
 
   updatePhysics();
   saveState();
+
+  generateNextWeight();
 });
 
 function saveState() {
@@ -91,10 +105,9 @@ function updatePhysics() {
   if (angle > 30) angle = 30;
   if (angle < -30) angle = -30;
 
+  angleDisplay.innerText = angle.toFixed(1) + "°";
   seesaw.style.transform = `rotate(${angle}deg)`;
 }
-
-const resetBtn = document.getElementById("reset-btn");
 
 resetBtn.addEventListener("click", function () {
   objects = [];
@@ -103,4 +116,5 @@ resetBtn.addEventListener("click", function () {
   localStorage.removeItem("seesawState");
 
   updatePhysics();
+  generateNextWeight();
 });
