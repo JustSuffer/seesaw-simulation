@@ -6,6 +6,18 @@ const rightWeightDisplay = document.getElementById("right-weight");
 
 let objects = [];
 
+window.addEventListener("load", function () {
+  const savedState = localStorage.getItem("seesawState");
+
+  if (savedState) {
+    objects = JSON.parse(savedState);
+    objects.forEach((obj) => {
+      createBox(obj);
+    });
+    updatePhysics();
+  }
+});
+
 seesaw.addEventListener("click", function (event) {
   const pivotRect = pivot.getBoundingClientRect();
   const pivotCenter = pivotRect.left + pivotRect.width / 2;
@@ -25,8 +37,14 @@ seesaw.addEventListener("click", function (event) {
   objects.push(newObject);
   createBox(newObject);
   /* console.log("Eklenen nesne:", newObject); */
+
   updatePhysics();
+  saveState();
 });
+
+function saveState() {
+  localStorage.setItem("seesawState", JSON.stringify(objects));
+}
 
 function createBox(obj) {
   const box = document.createElement("div");
