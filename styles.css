@@ -72,3 +72,19 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transform: translateX(-50%);
 }
+
+.reset-btn {
+  margin-top: 40px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #273849;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.reset-btn:hover {
+  background-color: #1c2531;
+}

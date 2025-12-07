@@ -93,3 +93,14 @@ function updatePhysics() {
 
   seesaw.style.transform = `rotate(${angle}deg)`;
 }
+
+const resetBtn = document.getElementById("reset-btn");
+
+resetBtn.addEventListener("click", function () {
+  objects = [];
+  seesaw.innerHTML = "";
+
+  localStorage.removeItem("seesawState");
+
+  updatePhysics();
+});
