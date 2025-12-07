@@ -1,6 +1,9 @@
 const seesaw = document.getElementById("seesaw");
 const pivot = document.querySelector(".pivot");
 
+const leftWeightDisplay = document.getElementById("left-weight");
+const rightWeightDisplay = document.getElementById("right-weight");
+
 let objects = [];
 
 seesaw.addEventListener("click", function (event) {
@@ -15,13 +18,14 @@ seesaw.addEventListener("click", function (event) {
   const newObject = {
     id: Date.now(),
     weight: weight,
-    distanve: distanceFromCenter,
+    distance: distanceFromCenter,
     cssLeft: 300 + distanceFromCenter,
   };
 
   objects.push(newObject);
   createBox(newObject);
-  console.log("Eklenen nesne:", newObject);
+  /* console.log("Eklenen nesne:", newObject); */
+  updatePhysics();
 });
 
 function createBox(obj) {
@@ -41,4 +45,33 @@ function createBox(obj) {
   }
 
   seesaw.appendChild(box);
+}
+
+function updatePhysics() {
+  let leftTorque = 0;
+  let rightTorque = 0;
+  let leftTotalWeight = 0;
+  let rightTotalWeight = 0;
+
+  objects.forEach((obj) => {
+    const torque = obj.weight * Math.abs(obj.distance);
+
+    if (obj.distance < 0) {
+      leftTorque += torque;
+      leftTotalWeight += obj.weight;
+    } else {
+      rightTorque += torque;
+      rightTotalWeight += obj.weight;
+    }
+  });
+
+  leftWeightDisplay.innerText = leftTotalWeight;
+  rightWeightDisplay.innerText = rightTotalWeight;
+  const netTorque = rightTorque - leftTorque;
+
+  let angle = netTorque / 1000;
+  if (angle > 30) angle = 30;
+  if (angle < -30) angle = -30;
+
+  seesaw.style.transform = `rotate(${angle}deg)`;
 }
